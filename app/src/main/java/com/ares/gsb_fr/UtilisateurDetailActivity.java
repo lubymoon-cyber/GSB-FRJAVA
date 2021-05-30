@@ -114,7 +114,7 @@ public class UtilisateurDetailActivity extends AppCompatActivity {
         for (int d = 0; d < arrayJSON.length(); d++) {
             //ON RECUPERE L'OBJET JSON DE CHAQUE LIGNE
             try {
-                JSONObject jsonBillLigns = arrayJSON.getJSONObject(d);
+                JSONObject jsonUserLigns = arrayJSON.getJSONObject(d);
 
                 tableRow = new TableRow(UtilisateurDetailActivity.this);
                 containerTable.addView(tableRow,
@@ -128,31 +128,30 @@ public class UtilisateurDetailActivity extends AppCompatActivity {
                 String valueOutPackage = "";
 
                 //je récuperer les données de la lignes
-                if(jsonBillLigns.has("package")) {
-                    quantityLign = jsonBillLigns.get("quantity").toString();
+                if(jsonUserLigns.has("package")) {
+                    quantityLign = jsonUserLigns.get("quantity").toString();
                 }
-                String dateLign = jsonBillLigns.get("created_at").toString();
-                String globalValueLign = jsonBillLigns.get("global_lign_value").toString();
+                String dateLign = jsonUserLigns.get("created_at").toString();
+                String globalValueLign = jsonUserLigns.get("global_lign_value").toString();
                 dateLign = dateLign.substring(0,10);
 
                 //je récupère les données des packages
-                if(jsonBillLigns.has("package")) {
-                    JSONObject packageLign = jsonBillLigns.getJSONObject("package");
+                if(jsonUserLigns.has("package")) {
+                    JSONObject packageLign = jsonUserLigns.getJSONObject("package");
                     namePackage = packageLign.get("package_name").toString();
                     valuePackage = packageLign.get("value").toString();
                 }
                 //je récupère les données des out_packages
-                if(jsonBillLigns.has("out_package")) {
-                    JSONObject outPackageLign = jsonBillLigns.getJSONObject("out_package");
+                if(jsonUserLigns.has("out_package")) {
+                    JSONObject outPackageLign = jsonUserLigns.getJSONObject("out_package");
                     nameOutPackage = outPackageLign.get("out_package_name").toString();
                     valueOutPackage = outPackageLign.get("value").toString();
                 }
 
-                //je recupere la facture
-                JSONObject bill = jsonBillLigns.getJSONObject("bill");
-                String idBill = bill.get("id").toString();
-                String numBill = bill.get("bill_provider_num").toString();
-                setSessionBillForEdit(idBill,numBill);
+                //je recupere l'utilisateur
+                JSONObject user = jsonUserLigns.getJSONObject("user");
+                String idUser = user.get("id").toString();
+                setSessionUserForEdit(idUser);
 
                 //date des lignes
                 TextView text = createTextView(d == 10, i == 2);
@@ -262,13 +261,12 @@ public class UtilisateurDetailActivity extends AppCompatActivity {
         }
     }
 
-    public void setSessionBillForEdit(String idBill,String numBill) {
+    public void setSessionUserForEdit(String idUser,String numBill) {
 
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences("id_bill_to_response", MODE_PRIVATE);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("id_user_to_response", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit ();
 
-        editor.putString("num_bill", numBill);
-        editor.putString("id_bill", idBill);
+        editor.putString("id_user", idUser);
 
         editor.commit ();
     }

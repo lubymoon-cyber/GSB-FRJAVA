@@ -74,7 +74,7 @@ public class FicheFraisDetailActivity extends AppCompatActivity {
 
     private void createTableLayout(String retourJson) {
 
-        TableLayout containerTable = (TableLayout) findViewById(R.id.tableFicheFraisLign);
+        TableLayout containerTable = (TableLayout) findViewById(R.id.tableFicheFraisDetail);
         //entete du tableau des factures
         List<String> colonnes = new ArrayList<String>();
         colonnes.add("Date");

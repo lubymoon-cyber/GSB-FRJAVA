@@ -44,7 +44,7 @@ public class UtilisateurActivity extends AppCompatActivity {
                     Integer userid = prefs.getInt("id_user", 0);
                     String userName = prefs.getString("nom_user","toto");
                     String userSurname = prefs.getString("prenom_user","tutu");
-                    String userSurname = prefs.getString("telephone_user","tata");
+                    String userPhone = prefs.getString("telephone_user","tata");
 
                     TextView textOpen = new TextView(UtilisateurActivity.this,null);
                     textOpen.findViewById(R.id.openTextBill);
