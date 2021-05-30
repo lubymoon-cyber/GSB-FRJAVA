@@ -1,16 +1,7 @@
 package com.ares.gsb_fr.ui.login;
 
 import android.app.Activity;
-
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -22,12 +13,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ares.gsb_fr.R;
-import com.ares.gsb_fr.ui.login.LoginViewModel;
-import com.ares.gsb_fr.ui.login.LoginViewModelFactory;
-import com.ares.gsb_fr.databinding.ActivityLoginBinding;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
-public class LoginActivity extends AppCompatActivity {
+import com.ares.gsb_fr.R;
+
+public class LoginActivity<ActivityLoginBinding> extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;

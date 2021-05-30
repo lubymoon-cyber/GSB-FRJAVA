@@ -12,10 +12,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Dashboard extends AppCompatActivity {
+public class DashboardActivity extends AppCompatActivity {
     private TextView openTextDsh;
     private Button goFicheFraisDsh;
-    private Button goBillDsh;
+    private Button goUtilisateurDsh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +23,8 @@ public class Dashboard extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
 
         this.openTextDsh = (TextView) findViewById(R.id.titleDashboard);
-        this.goFicheFraisDsh = (Button) findViewById(R.id.goFicheFraisDshListButton);
-        this.goBillDsh = (Button) findViewById(R.id.DshBillListButton);
+        this.goFicheFraisDsh = (Button) findViewById(R.id.DshFicheFraisListButton);
+        this.goUtilisateurDsh = (Button) findViewById(R.id.DshUtilisateurListButton);
 
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("connected_user", MODE_PRIVATE);
         String userName = prefs.getString("nom_user","toto");
@@ -32,31 +32,31 @@ public class Dashboard extends AppCompatActivity {
 
         openTextDsh.setText("Bonjour " + userName + " " + userSurname );
 
-        goBillDsh.setOnClickListener(new View.OnClickListener() {
+        goUtilisateurDsh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goBill();
+                goUtilisateur();
             }
         });
 
-        goMessgaeDsh.setOnClickListener(new View.OnClickListener() {
+        goFicheFraisDsh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goMessage();
+                goFicheFrais();
             }
         });
 
     }
 
-    private void goMessage() {
-        Intent goMessageList = new Intent(getApplicationContext(),MessageList.class);
-        startActivity(goMessageList);
+    private void goFicheFrais() {
+        Intent goFicheFraisList = new Intent(getApplicationContext(), FicheFraisActivity.class);
+        startActivity(goFicheFraisList);
         finish();
     }
 
-    private void goBill() {
-        Intent goBill = new Intent(getApplicationContext(),bill.class);
-        startActivity(goBill);
+    private void goUtilisateur() {
+        Intent goUtilisateur = new Intent(getApplicationContext(), UtilisateurActivity.class);
+        startActivity(goUtilisateur);
         finish();
     }
 
@@ -69,14 +69,16 @@ public class Dashboard extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.menuDshGoMessage:
-                goMessage();
+            case R.id.menuDshGoFicheFrais:
+                goFicheFrais();
                 return true;
-            case R.id.menuDshGoBill:
-                goBill();
+            case R.id.menuDshGoUtilisateur:
+                goUtilisateur();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+
+                //test
         }
     }
 }

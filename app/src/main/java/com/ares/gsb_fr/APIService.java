@@ -13,12 +13,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
-public class ApiService {
+public class APIService {
     private final String USER_AGENT = "Mozilla/5.0";
 
     private String dataSend="";
 
-    public static String urlApi = "http://192.168.56.1/bddstall/public/api/";
+    public static String urlApi = "http://192.168.108.203/gsb-fr/api/";
 
     // HTTP request
     public String sendRequest(String url, String method, Map<String, Object> parameters) throws Exception {
