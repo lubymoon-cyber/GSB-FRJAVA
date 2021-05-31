@@ -29,17 +29,23 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:layout_width="fill_parent"
+            <Button
+                android:id="@+id/createFicheFraisButton"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textSize="20dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:backgroundTint="@color/teal_700"
+                android:text="Créer une nouvelle fiche de frais"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
 
             <TableLayout
-                android:id="@+id/Utilisateur"
+                android:id="@+id/tableFicheFrais"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:layout_editor_absoluteX="229dp"

@@ -27,16 +27,14 @@ import java.util.List;
 import java.util.Map;
 
 public class FicheFraisDetailActivity extends AppCompatActivity {
-    private Button addLign;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_frais_detail);
 
-        this.addLign = (Button) findViewById(R.id.addLign);
-
-        SharedPreferences id = getApplicationContext().getSharedPreferences("id_bill_to_display", MODE_PRIVATE);
-        String idBill = id.getString("id_bill","0");
+        SharedPreferences id = getApplicationContext().getSharedPreferences("fiche_frais_selected", MODE_PRIVATE);
+        String idFicheFrais = id.getString("id_fiche_frais","0");
 
         final String[] retourJson = new String[1];
         Thread thread = new Thread(new Runnable() {
@@ -46,8 +44,8 @@ public class FicheFraisDetailActivity extends AppCompatActivity {
                     Map<String, Object> mapJava = new HashMap<String, Object>();
                     APIService http = new APIService();
                     //mettre d'url de la machine sur la VM
-                    String urlTest = http.urlApi+"billlign/list/"+idBill.toString();
-                    retourJson[0] = http.sendRequest(urlTest, "GET", mapJava);
+                    String url = http.urlApi+"fiche/fais/detail/"+idFicheFrais.toString();
+                    retourJson[0] = http.sendRequest(url, "GET", mapJava);
                     //System.out.println(retourJson[0]);
 
                 } catch (Exception e) {
@@ -64,12 +62,6 @@ public class FicheFraisDetailActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        addLign.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goEditMessage();
-            }
-        });
     }
 
     private void createTableLayout(String retourJson) {
@@ -79,12 +71,13 @@ public class FicheFraisDetailActivity extends AppCompatActivity {
         List<String> colonnes = new ArrayList<String>();
         colonnes.add("Date");
         colonnes.add("Quantité");
-        colonnes.add("Forfait / Hors forfait");
+        colonnes.add("libelle");
+        colonnes.add("Etat");
         colonnes.add("Montant unitaire");
-        colonnes.add("Montant total");
 
 
         JSONArray arrayJSON = new JSONArray();
+
 
         try {
             arrayJSON = new JSONArray(retourJson);
@@ -122,82 +115,116 @@ public class FicheFraisDetailActivity extends AppCompatActivity {
                         new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
                 i = 0;
-                String quantityLign = "";
-                String namePackage = "";
-                String valuePackage = "";
-                String nameOutPackage = "";
-                String valueOutPackage = "";
+                String quantite = "";
+                String libelle = "";
+                String date = "";
+                String montant = "";
 
-                //je récuperer les données de la lignes
-                if(jsonFicheFraisLign.has("package")) {
-                    quantityLign = jsonFicheFraisLign.get("quantity").toString();
+                //recupe du libelle d'un forfait
+                if(jsonFicheFraisLign.has("ligne_frais_forfaits")) {
+                    JSONArray arrayJSONForfait = new JSONArray(jsonFicheFraisLign.getJSONObject("ligne_frais_forfaits"));
+                    for (int j = 0; j < arrayJSONForfait.length(); j++ ) {
+
+                        JSONObject jsonForfaitLign = arrayJSON.getJSONObject(j);
+                        String quantiteForfait = jsonForfaitLign.get("quantite").toString();
+
+                        String dateForfait = jsonForfaitLign.get("date_ligne_frais_forfait").toString();
+                        dateForfait = dateForfait.substring(0,10);
+
+                        JSONObject etatLigne = jsonForfaitLign.getJSONObject("statut_ligne_frais_forfait");
+                        String libelleEtat = etatLigne.get("libelle").toString();
+
+                        JSONObject fraisForfait = jsonForfaitLign.getJSONObject("frais_forfait");
+                        String libelleFraisForfait = fraisForfait.get("libelle").toString();
+                        String montantFraisForfait = fraisForfait.get("montant").toString();
+
+                        //date des ligness
+                        TextView text = createTextView(d == 10, i == 2);
+                        text.setText(dateForfait);
+                        tableRow.addView(text, i++);
+                        text.setGravity(Gravity.LEFT);
+                        text.setTextColor(Color.parseColor("#3446eb"));
+
+                        //quantité de la ligne
+                        text = createTextView(d == 10, i == 2);
+                        text.setText(quantiteForfait);
+                        tableRow.addView(text, i++);
+                        text.setGravity(Gravity.CENTER);
+
+                        //libelleb de la ligne
+                        text = createTextView(d == 10, i == 2);
+                        text.setText(libelleFraisForfait);
+                        tableRow.addView(text, i++);
+                        text.setGravity(Gravity.CENTER);
+
+                        //libelle de l'etat de la ligne
+                        text = createTextView(d == 10, i == 2);
+                        text.setText(libelleEtat);
+                        tableRow.addView(text, i++);
+                        text.setGravity(Gravity.CENTER);
+
+                        //montant unitaire
+                        text = createTextView(d == 10, i == 2);
+                        text.setText(montantFraisForfait);
+                        tableRow.addView(text, i++);
+                        text.setGravity(Gravity.CENTER);
+
+                    }
                 }
-                String dateLign = jsonFicheFraisLign.get("created_at").toString();
-                String globalValueLign = jsonFicheFraisLign.get("global_lign_value").toString();
-                dateLign = dateLign.substring(0,10);
 
-                //je récupère les données des packages
-                if(jsonFicheFraisLign.has("package")) {
-                    JSONObject packageLign = jsonFicheFraisLign.getJSONObject("package");
-                    namePackage = packageLign.get("package_name").toString();
-                    valuePackage = packageLign.get("value").toString();
+                //recupe du libelle d'un hors forfait
+                if(jsonFicheFraisLign.has("ligne_frais_hors_forfaits")) {
+                    JSONArray arrayJSONHorsForfait = new JSONArray(jsonFicheFraisLign.getJSONObject("ligne_frais_hors_forfaits"));
+                    for (int k = 0; k < arrayJSONHorsForfait.length(); k++ ) {
+
+                        JSONObject jsonHorsForfaitLign = arrayJSON.getJSONObject(k);
+
+                        String quantiteHorsForfait = "";
+
+                        String dateHorsForfait = jsonHorsForfaitLign.get("date_ligne_frais_hors_forfait").toString();
+                        dateHorsForfait = dateHorsForfait.substring(0,10);
+
+                        String libelleHorsForfait = jsonHorsForfaitLign.get("libelle").toString();
+                        String montantHorsForfait = jsonHorsForfaitLign.get("montant").toString();
+
+
+                        JSONObject etatLigneHorsForfait = jsonHorsForfaitLign.getJSONObject("statut_ligne_frais_hors_forfait");
+                        String libelleEtatHorsForfait = etatLigneHorsForfait.get("libelle").toString();
+
+
+                        //date des ligness
+                        TextView text = createTextView(d == 10, i == 2);
+                        text.setText(dateHorsForfait);
+                        tableRow.addView(text, i++);
+                        text.setGravity(Gravity.LEFT);
+                        text.setTextColor(Color.parseColor("#3446eb"));
+
+                        //quantité de la ligne
+                        text = createTextView(d == 10, i == 2);
+                        text.setText(quantiteHorsForfait);
+                        tableRow.addView(text, i++);
+                        text.setGravity(Gravity.CENTER);
+
+                        //libelleb de la ligne
+                        text = createTextView(d == 10, i == 2);
+                        text.setText(libelleHorsForfait);
+                        tableRow.addView(text, i++);
+                        text.setGravity(Gravity.CENTER);
+
+                        //libelle de l'etat de la ligne
+                        text = createTextView(d == 10, i == 2);
+                        text.setText(libelleEtatHorsForfait);
+                        tableRow.addView(text, i++);
+                        text.setGravity(Gravity.CENTER);
+
+                        //montant unitaire
+                        text = createTextView(d == 10, i == 2);
+                        text.setText(montantHorsForfait);
+                        tableRow.addView(text, i++);
+                        text.setGravity(Gravity.CENTER);
+
+                    }
                 }
-                //je récupère les données des out_packages
-                if(jsonFicheFraisLign.has("out_package")) {
-                    JSONObject outPackageLign = jsonFicheFraisLign.getJSONObject("out_package");
-                    nameOutPackage = outPackageLign.get("out_package_name").toString();
-                    valueOutPackage = outPackageLign.get("value").toString();
-                }
-
-                //je recupere la facture
-                JSONObject bill = jsonFicheFraisLign.getJSONObject("bill");
-                String idBill = bill.get("id").toString();
-                String numBill = bill.get("bill_provider_num").toString();
-                setSessionBillForEdit(idBill,numBill);
-
-                //date des lignes
-                TextView text = createTextView(d == 10, i == 2);
-                text.setText(dateLign);
-                tableRow.addView(text, i++);
-                text.setGravity(Gravity.LEFT);
-                text.setTextColor(Color.parseColor("#3446eb"));
-
-                //quantité de la ligne
-                text = createTextView(d == 10, i == 2);
-                text.setText(quantityLign);
-                tableRow.addView(text, i++);
-                text.setGravity(Gravity.CENTER);
-
-                //nom du forfait ou hors forfait
-                text = createTextView(d == 10, i == 2);
-                if(namePackage != "") {
-                    text.setText(namePackage);
-                    text.setTextColor(Color.parseColor("#00c20a"));
-                } else {
-                    text.setText(nameOutPackage);
-                    text.setTextColor(Color.parseColor("#ff4d00"));
-                }
-                tableRow.addView(text, i++);
-                text.setGravity(Gravity.CENTER);
-
-                //montant unitaire
-                text = createTextView(d == 10, i == 2);
-                if(valuePackage != "") {
-                    text.setText(valuePackage);
-                    text.setTextColor(Color.parseColor("#00c20a"));
-                } else {
-                    text.setText(valueOutPackage);
-                    text.setTextColor(Color.parseColor("#ff4d00"));
-                }
-                tableRow.addView(text, i++);
-                text.setGravity(Gravity.CENTER);
-
-                //montant total
-                text = createTextView(d == 10, i == 2);
-                text.setText(globalValueLign);
-                tableRow.addView(text, i++);
-                text.setGravity(Gravity.CENTER);
-
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -237,26 +264,27 @@ public class FicheFraisDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_bill_lign, menu);
+        getMenuInflater().inflate(R.menu.menu_fichefrais_detail, menu);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+
         switch (item.getItemId()) {
-            case R.id.menuBillLignGoMessage:
-                goMessage();
-                return true;
-            case R.id.menuBillLignGoDashboard:
+            case R.id.menuDshDashboard:
                 goDashboard();
                 return true;
-            case R.id.menuBillLignGoBill:
-                goBill();
+            case R.id.menuDshFichesFrais:
+                goFicheFrais();
+                return true;
+            case R.id.menuDshUtilisateur:
+                goUtilisateur();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
     public void setSessionBillForEdit(String idBill,String numBill) {
 

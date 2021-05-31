@@ -18,7 +18,7 @@ public class APIService {
 
     private String dataSend="";
 
-    public static String urlApi = "http://192.168.108.203/gsb-fr/api/";
+    public static String urlApi = "https://192.168.108.203:8000/api/gsb-fr/api/";
 
     // HTTP request
     public String sendRequest(String url, String method, Map<String, Object> parameters) throws Exception {

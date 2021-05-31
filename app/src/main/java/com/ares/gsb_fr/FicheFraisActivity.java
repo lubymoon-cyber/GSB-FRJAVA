@@ -27,27 +27,34 @@ import java.util.List;
 import java.util.Map;
 
 public class FicheFraisActivity extends AppCompatActivity {
-    private TextView openDetailFicheFrais;
+
+    private Button createFicheFraisButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fiche_frais);
 
-        this.openDetailFicheFrais = (TextView) findViewById(R.id.openDetailFicheFrais);
+        this.createFicheFraisButton = (Button) findViewById(R.id.createFicheFraisButton);
+
+        createFicheFraisButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goCreateFicheFrais();
+            }
+        });
+
 
         final String[] retourJson = new String[1];
+
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 try {
-                    SharedPreferences prefs = getApplicationContext().getSharedPreferences("connected_user", MODE_PRIVATE);
+                    SharedPreferences prefs = getApplicationContext().getSharedPreferences("user_connected", MODE_PRIVATE);
 
-                    Integer userid = prefs.getInt("id_user", 0);
-                    String userName = prefs.getString("nom_user","toto");
-                    String userSurname = prefs.getString("prenom_user","tutu");
-
-                    TextView textOpen = new TextView(FicheFraisActivity.this,null);
-                    textOpen.findViewById(R.id.openDetailFicheFrais);
-                    openTextFicheFrais.setText("de " + userName + " " + userSurname);
+                    Integer userid = prefs.getInt("user_id", 0);
+                    String userName = prefs.getString("user_nom","anonyme");
+                    String userSurname = prefs.getString("user_prenom","anonyme");
 
                     Map<String, Object> mapJava = new HashMap<String, Object>();
                     APIService http = new APIService();
@@ -79,6 +86,7 @@ public class FicheFraisActivity extends AppCompatActivity {
         List<String> colonnes = new ArrayList<String>();
         colonnes.add("Utilisateur");
         colonnes.add("Date");
+        colonnes.add("Etat");
         colonnes.add("");
 
         JSONArray arrayJSON = new JSONArray();
@@ -119,7 +127,7 @@ public class FicheFraisActivity extends AppCompatActivity {
                         new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
                 i = 0;
-                String FicheFraisId = jsonFicheFrais.get("id").toString();
+                String ficheFraisId = jsonFicheFrais.get("id").toString();
 
                 //je récuperer le user des fiche de frais
                 JSONObject userFicheFrais = jsonFicheFrais.getJSONObject("user");
@@ -127,7 +135,12 @@ public class FicheFraisActivity extends AppCompatActivity {
                 String surnameUserFicheFrais = userFicheFrais.get("prenom").toString();
                 Integer idUserFicheFrais = (Integer) userFicheFrais.get("id");
 
+                //je récuperer l'état des fiches de frais
+                JSONObject etatFicheFrais = jsonFicheFrais.getJSONObject("etat_fiche_frais");
+                String libelleEtat = etatFicheFrais.get("libelle").toString();
 
+
+                //je récuperer l'état des fiches de frais
                 String dateFicheFrais = jsonFicheFrais.get("date_fiche_frais").toString();
                 dateFicheFrais = dateFicheFrais.substring(0,10);
 
@@ -136,7 +149,7 @@ public class FicheFraisActivity extends AppCompatActivity {
 
                 //Utilisateur de la fiche de frais
                 text = createTextView(d == 10, i == 2);
-                text.setText(nameUserFicheFrais);
+                text.setText(nameUserFicheFrais + " " + surnameUserFicheFrais);
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.CENTER);
 
@@ -146,27 +159,33 @@ public class FicheFraisActivity extends AppCompatActivity {
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.CENTER);
 
+                //Etat de la fiche de frais
+                text = createTextView(d == 10, i == 2);
+                text.setText(libelleEtat);
+                tableRow.addView(text, i++);
+                text.setGravity(Gravity.CENTER);
+
 
                 //Bouton pour voir les lignes de fiches de frais
-                Button button = new Button(FicheFraisActivity.this);
-                button.setText("Consulter");
+                Button buttonDetail = new Button(FicheFraisActivity.this);
+                buttonDetail.setText("Consulter");
 
                 int bottom = d==10 ? 1 : 0;
                 int right = i==2 ? 1 : 0;
                 TableRow.LayoutParams params = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 0.1f);
                 params.setMargins(1, 1, right, bottom);
-                button.setLayoutParams(params);
-                button.setPadding(4, 4, 10, 4);
+                buttonDetail.setLayoutParams(params);
+                buttonDetail.setPadding(4, 4, 10, 4);
 
-                button.setTextColor(Color.parseColor("#3446eb"));
-                button.setTypeface(null,Typeface.BOLD);
-                tableRow.addView(button, i++);
-                button.setGravity(Gravity.CENTER);
+                buttonDetail.setTextColor(Color.parseColor("#3446eb"));
+                buttonDetail.setTypeface(null,Typeface.BOLD);
+                tableRow.addView(buttonDetail, i++);
+                buttonDetail.setGravity(Gravity.CENTER);
 
-                button.setOnClickListener(new View.OnClickListener() {
+                buttonDetail.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        goFicheFraisSelected(FicheFraisId);
+                        goFicheFraisSelected(ficheFraisId);
                     }
                 });
 
@@ -195,30 +214,48 @@ public class FicheFraisActivity extends AppCompatActivity {
         finish();
     }
 
+    private void goUtilisateur() {
+        Intent goUtilisateur = new Intent(getApplicationContext(), UtilisateurActivity.class);
+        startActivity(goUtilisateur);
+        finish();
+    }
+
+    private void goCreateFicheFrais() {
+        Intent goCreateFicheFrais = new Intent(getApplicationContext(), CreerFicheFraisActivity.class);
+        startActivity(goCreateFicheFrais);
+        finish();
+    }
+
+    private void goFicheFraisSelected(String FicheFraisId) {
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("fiche_frais_selected", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit ();
+        editor.putString("id_fiche_frais", FicheFraisId);
+        editor.commit ();
+
+        Intent goFicheFraisDetail = new Intent(getApplicationContext(),FicheFraisDetailActivity.class);
+        startActivity(goFicheFraisDetail);
+        finish();
+    }
+
+    /////////////////////
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_FicheFrais, menu);
+        getMenuInflater().inflate(R.menu.menu_fichefrais, menu);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+
         switch (item.getItemId()) {
-            case R.id.menuFicheFraisGoDsh:
+            case R.id.menuDshDashboard:
                 goDashboard();
+                return true;
+            case R.id.menuDshUtilisateur:
+                goUtilisateur();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-    private void goFicheFraisSelected(String FicheFraisId) {
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences("id_FicheFrais_to_display", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit ();
-        editor.putString("id_FicheFrais", FicheFraisId);
-        editor.commit ();
-
-        Intent goFicheFraisLigns = new Intent(getApplicationContext(),FicheFraisDetailActivity.class);
-        startActivity(goFicheFraisLigns);
-        finish();
-    }
+    /////////////////////
 }

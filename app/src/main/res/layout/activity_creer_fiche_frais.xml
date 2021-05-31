@@ -4,62 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ConnexionActivity">
+    tools:context=".CreerFicheFraisActivity">
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
-
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="fill_parent"
+            android:id="@+id/titleCreate"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="GSB"
-            android:textAlignment="center"
-            android:textSize="40dp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Saisissez vos identifiants"
-            android:textAlignment="center"
-            android:textSize="20dp"
+            android:text="Création d'une fiche de frais avec un hors forfait"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="326dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/logo" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="44dp" />
 
         <EditText
-            android:id="@+id/login"
+            android:id="@+id/libelleToSend"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dip"
-            android:hint="Identifiant"
-            android:inputType="textEmailAddress"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.471" />
-
-        <EditText
-            android:id="@+id/password"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dip"
-            android:hint="Mot de passe"
-            android:inputType="textPassword"
+            android:hint="libelle Hors Forfait"
+            android:inputType="text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -67,20 +34,32 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.56" />
 
+        <EditText
+            android:id="@+id/montantToSend"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dip"
+            android:hint="Montant du Hors Forfait"
+            android:inputType="text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.56" />
 
         <Button
-            android:id="@+id/dashboardButton"
-            android:layout_width="270dp"
+            android:id="@+id/sendFicheFrais"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
+            android:text="Créer la note de frais"
             android:layout_gravity="center"
             android:layout_marginTop="15dp"
-            android:backgroundTint="@color/teal_700"
-            android:text="Se connecter"
+            android:backgroundTint="#349eeb"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

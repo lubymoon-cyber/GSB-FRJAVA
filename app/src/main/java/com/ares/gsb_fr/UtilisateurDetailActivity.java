@@ -27,16 +27,15 @@ import java.util.List;
 import java.util.Map;
 
 public class UtilisateurDetailActivity extends AppCompatActivity {
-    private Button addLign;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_utilisateur_detail);
 
-        this.addLign = (Button) findViewById(R.id.addLign);
 
-        SharedPreferences id = getApplicationContext().getSharedPreferences("id_bill_to_display", MODE_PRIVATE);
-        String idBill = id.getString("id_bill","0");
+        SharedPreferences id = getApplicationContext().getSharedPreferences("fiche_utilisateur", MODE_PRIVATE);
+        String idUser = id.getString("id_user","0");
 
         final String[] retourJson = new String[1];
         Thread thread = new Thread(new Runnable() {
@@ -46,7 +45,7 @@ public class UtilisateurDetailActivity extends AppCompatActivity {
                     Map<String, Object> mapJava = new HashMap<String, Object>();
                     APIService http = new APIService();
                     //mettre d'url de la machine sur la VM
-                    String urlTest = http.urlApi+"billlign/list/"+idBill.toString();
+                    String urlTest = http.urlApi+"user/data/"+idUser.toString();
                     retourJson[0] = http.sendRequest(urlTest, "GET", mapJava);
                     //System.out.println(retourJson[0]);
 
@@ -64,12 +63,6 @@ public class UtilisateurDetailActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        addLign.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goUtilisateur();
-            }
-        });
     }
 
     private void createTableLayout(String retourJson) {
@@ -80,6 +73,7 @@ public class UtilisateurDetailActivity extends AppCompatActivity {
         colonnes.add("Nom");
         colonnes.add("Prénom");
         colonnes.add("Téléphone");
+        colonnes.add("Adresse postale");
         colonnes.add("Email");
 
 
@@ -121,78 +115,49 @@ public class UtilisateurDetailActivity extends AppCompatActivity {
                         new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
                 i = 0;
-                String quantityLign = "";
-                String namePackage = "";
-                String valuePackage = "";
-                String nameOutPackage = "";
-                String valueOutPackage = "";
+                String nom = "";
+                String prenom = "";
+                String telephone = "";
+                String adresse = "";
+                String email = "";
 
-                //je récuperer les données de la lignes
-                if(jsonUserLigns.has("package")) {
-                    quantityLign = jsonUserLigns.get("quantity").toString();
-                }
-                String dateLign = jsonUserLigns.get("created_at").toString();
-                String globalValueLign = jsonUserLigns.get("global_lign_value").toString();
-                dateLign = dateLign.substring(0,10);
 
-                //je récupère les données des packages
-                if(jsonUserLigns.has("package")) {
-                    JSONObject packageLign = jsonUserLigns.getJSONObject("package");
-                    namePackage = packageLign.get("package_name").toString();
-                    valuePackage = packageLign.get("value").toString();
-                }
-                //je récupère les données des out_packages
-                if(jsonUserLigns.has("out_package")) {
-                    JSONObject outPackageLign = jsonUserLigns.getJSONObject("out_package");
-                    nameOutPackage = outPackageLign.get("out_package_name").toString();
-                    valueOutPackage = outPackageLign.get("value").toString();
-                }
+                nom = jsonUserLigns.get("nom").toString();
+                prenom = jsonUserLigns.get("prenom").toString();
+                telephone = jsonUserLigns.get("telephone").toString();
+                adresse = jsonUserLigns.get("adresse").toString() + " " + jsonUserLigns.get("code_postal").toString() + " " + jsonUserLigns.get("ville").toString();
+                email = jsonUserLigns.get("email").toString();
 
-                //je recupere l'utilisateur
-                JSONObject user = jsonUserLigns.getJSONObject("user");
-                String idUser = user.get("id").toString();
-                setSessionUserForEdit(idUser);
 
-                //date des lignes
+
+                //affichage nom
                 TextView text = createTextView(d == 10, i == 2);
-                text.setText(dateLign);
+                text.setText(nom);
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.LEFT);
                 text.setTextColor(Color.parseColor("#3446eb"));
 
-                //quantité de la ligne
+                //affichage prenom
                 text = createTextView(d == 10, i == 2);
-                text.setText(quantityLign);
+                text.setText(prenom);
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.CENTER);
 
-                //nom du forfait ou hors forfait
+                //affichage telephone
                 text = createTextView(d == 10, i == 2);
-                if(namePackage != "") {
-                    text.setText(namePackage);
-                    text.setTextColor(Color.parseColor("#00c20a"));
-                } else {
-                    text.setText(nameOutPackage);
-                    text.setTextColor(Color.parseColor("#ff4d00"));
-                }
+                text.setText(telephone);
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.CENTER);
 
-                //montant unitaire
+                //affichage adresse
                 text = createTextView(d == 10, i == 2);
-                if(valuePackage != "") {
-                    text.setText(valuePackage);
-                    text.setTextColor(Color.parseColor("#00c20a"));
-                } else {
-                    text.setText(valueOutPackage);
-                    text.setTextColor(Color.parseColor("#ff4d00"));
-                }
+                text.setText(adresse);
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.CENTER);
 
-                //montant total
+                //affichage email
                 text = createTextView(d == 10, i == 2);
-                text.setText(globalValueLign);
+                text.setText(email);
                 tableRow.addView(text, i++);
                 text.setGravity(Gravity.CENTER);
 
@@ -232,6 +197,12 @@ public class UtilisateurDetailActivity extends AppCompatActivity {
         finish();
     }
 
+    private void goFicheFrais() {
+        Intent goFicheFrais = new Intent(getApplicationContext(),FicheFraisActivity.class);
+        startActivity(goFicheFrais);
+        finish();
+    }
+
     public void goEditFicheFrais() {
         Intent goEditbill = new Intent(getApplicationContext(),FicheFraisDetailActivity.class);
         startActivity(goEditbill);
@@ -240,21 +211,21 @@ public class UtilisateurDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_bill_lign, menu);
+        getMenuInflater().inflate(R.menu.menu_utilisateur_detail, menu);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+
         switch (item.getItemId()) {
-            case R.id.menuBillLignGoMessage:
-                goEditFicheFrais();
-                return true;
-            case R.id.menuBillLignGoDashboard:
+            case R.id.menuDshDashboard:
                 goDashboard();
                 return true;
-            case R.id.menuBillLignGoBill:
-                goBill();
+            case R.id.menuDshFichesFrais:
+                goFicheFrais();
+                return true;
+            case R.id.menuDshUtilisateur:
+                goUtilisateur();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

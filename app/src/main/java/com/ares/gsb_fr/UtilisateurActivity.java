@@ -27,34 +27,25 @@ import java.util.List;
 import java.util.Map;
 
 public class UtilisateurActivity extends AppCompatActivity {
-    private TextView openTextBill;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_utilisateur);
 
-        this.openTextBill = (TextView) findViewById(R.id.openTextBill);
-
         final String[] retourJson = new String[1];
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 try {
-                    SharedPreferences prefs = getApplicationContext().getSharedPreferences("connected_user", MODE_PRIVATE);
+                    SharedPreferences prefs = getApplicationContext().getSharedPreferences("user_connected", MODE_PRIVATE);
 
-                    Integer userid = prefs.getInt("id_user", 0);
-                    String userName = prefs.getString("nom_user","toto");
-                    String userSurname = prefs.getString("prenom_user","tutu");
-                    String userPhone = prefs.getString("telephone_user","tata");
-
-                    TextView textOpen = new TextView(UtilisateurActivity.this,null);
-                    textOpen.findViewById(R.id.openTextBill);
-                    openTextBill.setText("de " + userName + " " + userSurname);
+                    Integer userid = prefs.getInt("user_id", 0);
 
                     Map<String, Object> mapJava = new HashMap<String, Object>();
                     APIService http = new APIService();
-                    //mettre d'url de la machine sur la VM
-                    String urlTest = http.urlApi+"user/list/"+userid.toString();
-                    retourJson[0] = http.sendRequest(urlTest, "GET", mapJava);
+
+                    String url = http.urlApi+"user/list/"+userid.toString();
+                    retourJson[0] = http.sendRequest(url, "GET", mapJava);
                     //System.out.println(retourJson);
 
                 } catch (Exception e) {
@@ -75,8 +66,8 @@ public class UtilisateurActivity extends AppCompatActivity {
 
     private void createTableLayout(String retourJson) {
 
-        TableLayout containerTable = (TableLayout) findViewById(R.id.Utilisateur);
-        //entete du tableau des factures
+        TableLayout containerTable = (TableLayout) findViewById(R.id.tableUtilisateur);
+        //entete du tableau des utlisateurs
         List<String> colonnes = new ArrayList<String>();
         colonnes.add("Nom");
         colonnes.add("Prénom");
@@ -124,19 +115,24 @@ public class UtilisateurActivity extends AppCompatActivity {
                 String nameUser = jsonUser.get("nom").toString();
                 String surnameUser = jsonUser.get("prenom").toString();
 
-                //je récuperer le user des factures
-                //JSONObject user = jsonUser.getJSONObject("user");
-                //String nameUser = user.get("nom").toString();
-                //String surnameUser = user.get("prenom").toString();
+                TextView text = createTextView(d == 10, i == 2);
 
+                //affchage nom
+                text = createTextView(d == 10, i == 2);
+                text.setText(nameUser);
+                tableRow.addView(text, i++);
+                text.setGravity(Gravity.CENTER);
 
+                //affchage prenom
+                text = createTextView(d == 10, i == 2);
+                text.setText(surnameUser);
+                tableRow.addView(text, i++);
+                text.setGravity(Gravity.CENTER);
 
-
-
-
-                //BUTTON pour voir les lignes
+                //BUTTON pour voir le detail de l'utilisateur
                 Button button = new Button(UtilisateurActivity.this);
-                button.setText("voir");
+                button.setText("voir la fiche");
+
 
                 int bottom = d==10 ? 1 : 0;
                 int right = i==2 ? 1 : 0;
@@ -190,25 +186,27 @@ public class UtilisateurActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_bill, menu);
+        getMenuInflater().inflate(R.menu.menu_utilisateur, menu);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+
         switch (item.getItemId()) {
-            case R.id.menuBillGoMessage:
-                goFicheFrais();
-                return true;
-            case R.id.menuBillGoDsh:
+            case R.id.menuDshDashboard:
                 goDashboard();
+                return true;
+            case R.id.menuDshFichesFrais:
+                goFicheFrais();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
     private void goUserSelected(String idUser) {
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences("id_bill_to_display", MODE_PRIVATE);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("fiche_utilisateur", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit ();
         editor.putString("id_user", idUser);
         editor.commit ();
